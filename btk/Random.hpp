@@ -25,13 +25,13 @@ public:
   };
 
   /**
-   * Generates a random number from the `Random` instance
+   * Generates the next random number from the `Random` instance
    *
    * Returns an integer between the min and max defined at initialization
    *
    * @return A random Int
    */
-  int roll() { return dis(twister); }
+  int next() { return dis(twister); }
 
 private:
   std::mt19937 twister;
