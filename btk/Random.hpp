@@ -16,13 +16,22 @@ public:
    *
    * @param min The minimum number generated; Int.
    * @param max The maximum number generated; Int.
-   * @param seed The seed used by the Mersenne Twister, optional; Int.
    *
    */
-  Random(int min = 0, int max = 1, int seed = std::random_device{}()) {
-    twister = std::mt19937(seed);
-    dis = std::uniform_int_distribution<int>(min, max);
-  };
+  Random(int min = 0, int max = 1) : twister(makeTwister()), dis(min, max) {};
+
+  /**
+   * Constructor for the `Random` class
+   *
+   * Description.
+   * @param seed A random seed to provide entropy to the mersene twister;
+   * uint32_t.
+   * @param min The minimum number generated; Int.
+   * @param max The maximum number generated; Int.
+   *
+   */
+  Random(uint32_t seed, int min = 0, int max = 1)
+      : twister(seed), dis(min, max) {};
 
   /**
    * Generates the next random number from the `Random` instance
@@ -34,6 +43,18 @@ public:
   int next() { return dis(twister); }
 
 private:
+  /**
+   * Creates a Mersenne Twister engine seeded with entropy from
+   * `std::random_device`.
+   *
+   * @return A randomly seeded Mersenne Twister engine.
+   */
+  static std::mt19937 makeTwister() {
+    std::random_device rd;
+    std::seed_seq seq{rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
+    return std::mt19937(seq);
+  }
+
   std::mt19937 twister;
   std::uniform_int_distribution<int> dis;
 };
