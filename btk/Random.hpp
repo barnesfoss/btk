@@ -19,7 +19,7 @@ public:
    * @param seed The seed used by the Mersenne Twister, optional; Int.
    *
    */
-  Random(int min = 0, int max = 1, int seed = rand()) {
+  Random(int min = 0, int max = 1, int seed = std::random_device{}()) {
     twister = std::mt19937(seed);
     dis = std::uniform_int_distribution<int>(min, max);
   };
