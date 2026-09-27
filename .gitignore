@@ -1,0 +1,8 @@
+*
+!.gitignore
+!.gitmodules
+!LICENSE
+!README
+!docs/Doxyfile
+!btk/**
+!btk
