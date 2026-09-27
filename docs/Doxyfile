@@ -1,5 +1,5 @@
 PROJECT_NAME = "Barnes ToolKit"
-INPUT = "../src" \
+INPUT = "../btk" \
         "../README.md"
 RECURSIVE = YES
 HTML_EXTRA_STYLESHEET  = \
