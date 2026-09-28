@@ -23,18 +23,11 @@ public:
    * @param prog How far the bar has progressed to `max`
    */
   void setProgress(float prog) { progress = prog; }
-  /**
-   * Sets the character displayed on the filled part of the `Bar`
-   *
-   * @param c The character to set to
-   */
-  void setFilled(std::string c) { filled = c; }
-  /**
-   * Sets the character displayed on the empty part of the `Bar`
-   *
-   * @param c The character to set to
-   */
-  void setEmpty(std::string c) { empty = c; }
+
+  void setCharacters(std::vector<std::string> chars) {
+    characters = chars;
+    maxCharacter = chars.size() - 1;
+  };
 
   /**
    * Toggles the percentage displayed to the right of the `Bar`
@@ -47,15 +40,24 @@ public:
    * @param out Target ostream
    */
   virtual void display(std::ostream &out) {
-    int prog = (progress / max) * size;
-    for (int i = 0; i < prog; i++) {
-      out << filled;
+    float percentage = progress / max;
+    float prog = percentage * size;
+
+    for (int i = 0; i < size; i++) {
+      float position = prog - i;
+      if (position >= 1.0f) {
+        out << characters[maxCharacter];
+      } else if (position > 0.0f) {
+        int characterIndex = (int)(position * (maxCharacter + 1));
+        characterIndex = std::min(characterIndex, maxCharacter);
+        out << characters[characterIndex];
+      } else {
+        out << characters[0];
+      }
     }
-    for (int i = 0; i < size - prog; i++) {
-      out << empty;
-    }
+
     if (showPercent) {
-      out << " " << progress / max * 100 << "%";
+      out << " " << percentage * 100 << "%";
     }
   }
 
@@ -63,8 +65,8 @@ private:
   float progress = 0;
   float max;
   int size;
-  std::string filled = "#";
-  std::string empty = "-";
+  std::vector<std::string> characters = {"-", "*", "#"};
+  int maxCharacter = characters.size() - 1;
   bool showPercent = true;
 };
 
@@ -109,7 +111,7 @@ public:
 
 private:
   std::vector<std::string> spinner = {"\\", "|", "/", "-"};
-  uint spinnerLength = 4;
+  uint spinnerLength = 3;
   uint8_t tick = 0;
 };
 } // namespace progress
