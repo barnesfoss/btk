@@ -24,7 +24,7 @@ public:
    * @return Escaped string
    */
   std::string toEscape() {
-    char buf[19];
+    char buf[20];
     snprintf(buf, sizeof(buf), "\x1b[38;2;%i;%i;%im", r, g, b);
     return std::string(buf);
   }
