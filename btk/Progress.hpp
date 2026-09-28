@@ -41,6 +41,11 @@ public:
   void togglePercent() { showPercent = !showPercent; }
 
   /**
+   * Toggles the percentage displayed to the right of the `Bar`
+   */
+  void toggleBrackets() { showBrackets = !showBrackets; }
+
+  /**
    * Prints a `Bar` to the supplied ostream
    *
    * @param out Target ostream
@@ -48,7 +53,8 @@ public:
   virtual void display(std::ostream &out) {
     float percentage = progress / max;
     float prog = percentage * size;
-
+    if (showBrackets)
+      out << "[";
     for (int i = 0; i < size; i++) {
       float position = prog - i;
       if (position >= 1.0f) {
@@ -61,10 +67,10 @@ public:
         out << characters[0];
       }
     }
-
-    if (showPercent) {
+    if (showBrackets)
+      out << "]";
+    if (showPercent)
       out << " " << percentage * 100 << "%";
-    }
   }
 
 private:
@@ -74,6 +80,7 @@ private:
   std::vector<std::string> characters = {"-", "*", "#"};
   int maxCharacter = characters.size() - 1;
   bool showPercent = true;
+  bool showBrackets = true;
 };
 
 /**
