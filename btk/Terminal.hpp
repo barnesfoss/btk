@@ -17,20 +17,34 @@ class TermColor : public Color {
 public:
   TermColor(uint8_t r, uint8_t g, uint8_t b) : Color(r, g, b) {};
   TermColor(const Color &color) : Color(color.r, color.g, color.b) {};
+
+  /**
+   * Formats a string to a terminal escape sequence
+   *
+   * @return Escaped string
+   */
   std::string toEscape() {
     char buf[19];
     snprintf(buf, sizeof(buf), "\x1b[38;2;%i;%i;%im", r, g, b);
     return std::string(buf);
   }
+
   friend std::ostream &operator<<(std::ostream &out, TermColor &color);
 };
 
 inline char TERMCOLOR_RESET[] = "\x1b[0m";
 
+/**
+ * An overload that outputs the string in a terminal color code
+ *
+ * @param out The target ostream
+ * @param color The color that is being formatted
+ */
 inline std::ostream &operator<<(std::ostream &out, TermColor &color) {
   out << color.toEscape();
   return out;
 };
+
 /**
  * Returns whether a terminal has truecolor support
  */
