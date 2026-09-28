@@ -28,7 +28,7 @@ public:
    * Sets the character progression for the progress bar from least filled to
    * filled
    *
-   * @params chars a vector of strings
+   * @param chars a vector of strings
    */
   void setCharacters(std::vector<std::string> chars) {
     characters = chars;
