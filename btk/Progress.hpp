@@ -24,6 +24,12 @@ public:
    */
   void setProgress(float prog) { progress = prog; }
 
+  /**
+   * Sets the character progression for the progress bar from least filled to
+   * filled
+   *
+   * @params chars a vector of strings
+   */
   void setCharacters(std::vector<std::string> chars) {
     characters = chars;
     maxCharacter = chars.size() - 1;
