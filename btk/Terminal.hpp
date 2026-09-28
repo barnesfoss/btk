@@ -10,7 +10,7 @@ public:
   TermColor(uint8_t r, uint8_t g, uint8_t b) : Color(r, g, b) {};
   TermColor(const Color &color) : Color(color.r, color.g, color.b) {};
   std::string toEscape() {
-    char buf[50];
+    char buf[19];
     snprintf(buf, sizeof(buf), "\x1b[38;2;%i;%i;%im", r, g, b);
     return std::string(buf);
   }
