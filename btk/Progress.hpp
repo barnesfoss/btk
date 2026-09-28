@@ -35,6 +35,14 @@ public:
    * @param c The character to set to
    */
   void setEmpty(std::string c) { empty = c; }
+
+  /**
+   * Sets the character displayed between filled and empty on the `Bar`
+   *
+   * @param c The character to set to
+   */
+  void setMiddle(std::string c) { middle = c; }
+
   /**
    * Toggles the percentage displayed to the right of the `Bar`
    */
