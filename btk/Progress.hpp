@@ -109,7 +109,11 @@ public:
       tick = 0;
     Bar::display(out);
   };
-
+  /**
+   * Sets the character progression for the spinner
+   *
+   * @params chars a vector of strings
+   */
   void setSpinner(std::vector<std::string> spin) {
     spinner = spin;
     spinnerLength = spin.size() - 1;
