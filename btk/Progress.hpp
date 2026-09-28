@@ -37,13 +37,6 @@ public:
   void setEmpty(std::string c) { empty = c; }
 
   /**
-   * Sets the character displayed between filled and empty on the `Bar`
-   *
-   * @param c The character to set to
-   */
-  void setMiddle(std::string c) { middle = c; }
-
-  /**
    * Toggles the percentage displayed to the right of the `Bar`
    */
   void togglePercent() { showPercent = !showPercent; }
@@ -55,16 +48,12 @@ public:
    */
   virtual void display(std::ostream &out) {
     int prog = (progress / max) * size;
-    out << "[";
-    for (int i = 0; i < prog - 1; i++) {
+    for (int i = 0; i < prog; i++) {
       out << filled;
     }
-    if (prog != size and middle != "")
-      out << middle;
-    for (int i = 0; i < size - prog - 1; i++) {
+    for (int i = 0; i < size - prog; i++) {
       out << empty;
     }
-    out << "]";
     if (showPercent) {
       out << " " << progress / max * 100 << "%";
     }
@@ -75,7 +64,6 @@ private:
   float max;
   int size;
   std::string filled = "#";
-  std::string middle = "";
   std::string empty = "-";
   bool showPercent = true;
 };
