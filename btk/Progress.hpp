@@ -2,6 +2,7 @@
 #include "stdint.h"
 #include <iostream>
 #include <string>
+#include <vector>
 namespace btk {
 namespace progress {
 
@@ -27,13 +28,13 @@ public:
    *
    * @param c The character to set to
    */
-  void setFilled(const char c) { filled = c; }
+  void setFilled(std::string c) { filled = c; }
   /**
    * Sets the character displayed on the empty part of the `Bar`
    *
    * @param c The character to set to
    */
-  void setEmpty(const char c) { empty = c; }
+  void setEmpty(std::string c) { empty = c; }
   /**
    * Toggles the percentage displayed to the right of the `Bar`
    */
@@ -46,8 +47,16 @@ public:
    */
   virtual void display(std::ostream &out) {
     int prog = (progress / max) * size;
-    out << "[" << std::string(prog, filled) << std::string(size - prog, empty)
-        << "]";
+    out << "[";
+    for (int i = 0; i < prog - 1; i++) {
+      out << filled;
+    }
+    if (prog != size and middle != "")
+      out << middle;
+    for (int i = 0; i < size - prog - 1; i++) {
+      out << empty;
+    }
+    out << "]";
     if (showPercent) {
       out << " " << progress / max * 100 << "%";
     }
@@ -57,8 +66,9 @@ private:
   float progress = 0;
   float max;
   int size;
-  char filled = '#';
-  char empty = '-';
+  std::string filled = "#";
+  std::string middle = "";
+  std::string empty = "-";
   bool showPercent = true;
 };
 
@@ -91,13 +101,19 @@ public:
   void display(std::ostream &out) override {
     out << spinner[tick] << " ";
     tick++;
-    if (tick > 3)
+    if (tick > spinnerLength)
       tick = 0;
     Bar::display(out);
   };
 
+  void setSpinner(std::vector<std::string> spin) {
+    spinner = spin;
+    spinnerLength = spin.size() - 1;
+  }
+
 private:
-  char spinner[4] = {'\\', '|', '/', '-'};
+  std::vector<std::string> spinner = {"\\", "|", "/", "-"};
+  uint spinnerLength = 4;
   uint8_t tick = 0;
 };
 } // namespace progress
