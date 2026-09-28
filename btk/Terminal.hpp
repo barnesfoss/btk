@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <string.h>
 namespace btk {
-/*
+/**
  * Returns whether a terminal has truecolor support
  */
 inline bool isTrueColor() {
