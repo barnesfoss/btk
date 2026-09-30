@@ -25,8 +25,7 @@ class TermColor : public Color {
     TermColor(uint8_t r, uint8_t g, uint8_t b) : Color(r, g, b) {};
     TermColor(const Color& color) : Color(color.r, color.g, color.b) {};
 
-    /**
-     * Formats a string to a terminal escape sequence
+    /** Formats a string to a terminal escape sequence
      *
      * @return Escaped string
      */
@@ -41,8 +40,7 @@ class TermColor : public Color {
 
 inline char TERMCOLOR_RESET[] = "\x1b[0m";
 
-/**
- * An overload that outputs the string in a terminal color code
+/** An overload that outputs the string in a terminal color code
  *
  * @param out The target ostream
  * @param color The color that is being formatted
@@ -52,16 +50,14 @@ inline std::ostream& operator<<(std::ostream& out, TermColor& color) {
     return out;
 };
 
-/**
- * Returns whether a terminal has truecolor support
+/** Returns whether a terminal has truecolor support
  */
 inline bool isTrueColor() {
     std::string result = std::getenv("COLORTERM");
     return result == "truecolor";
 };
 
-/**
- * Sets the cursor visibility in the terminal
+/** Sets the cursor visibility in the terminal
  *
  * @param show Whether to show or hide the cursor
  */
