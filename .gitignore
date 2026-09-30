@@ -6,3 +6,4 @@
 !docs/Doxyfile
 !btk/**
 !btk
+!.clang-format
