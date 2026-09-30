@@ -1,5 +1,16 @@
 ---
-BasedOnStyle: Google
-IndentWidth: 4
+BasedOnStyle: LLVM
 ---
 Language: Cpp
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: Empty
+BinPackArguments: false
+BinPackParameters: false
+ReflowComments: true
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+EmptyLineBeforeAccessModifier: LogicalBlock
+SeparateDefinitionBlocks: Always
+WrapNamespaceBodyWithEmptyLines: Never
+IndentWrappedFunctionNames: true
+IncludeBlocks: Regroup
