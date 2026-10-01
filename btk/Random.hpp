@@ -17,11 +17,11 @@ public:
   Random(int min = 0, int max = 1) : twister(makeTwister()), dis(min, max) {}
 
   /// Creates a pseudorandom number generator with the specified range and
-  /// seed
+  /// seed.
   ///
-  /// \param seed The inital entropy used by the generator
-  /// \param The minimum number that can be genrated.
-  /// \param The maximum number that can be generated.
+  /// \param seed The inital entropy used by the generator.
+  /// \param min The minimum number that can be genrated.
+  /// \param max The maximum number that can be generated.
   Random(uint32_t seed, int min = 0, int max = 1) : twister(seed), dis(min, max) {};
 
   /// Generates the next number in the sequence.
@@ -32,13 +32,13 @@ public:
   }
 
 private:
-  /// Makes a randomly initialized Mersenne Twister
+  /// Makes a randomly initialized Mersenne Twister.
   ///
   /// Creates a Mersenne Twister engine seeded with entropy from
-  /// \c std::random_device
+  /// \c std::random_device.
   ///
   /// \see std::random_device
-  /// \return The generated Mersenne Twister engine
+  /// \return The generated Mersenne Twister engine.
   static std::mt19937 makeTwister() {
     std::random_device rd;
     std::seed_seq seq{rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};

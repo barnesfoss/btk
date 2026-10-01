@@ -16,44 +16,44 @@
 #endif
 
 namespace btk {
-/// Represents an RGB color for truecolor terminal output
-class TermColor : public Color {
-public:
-  /// Creates an RGB color from the specified red, green, and blue values.
-  ///
-  /// \param r The red component.
-  /// \param g The green component.
-  /// \param b The blue component.
-  TermColor(uint8_t r, uint8_t g, uint8_t b) : Color(r, g, b) {};
+/// Represents an RGB color for truecolor terminal output.
+struct TermColor : Color3 {
+  /// \copydoc Color3::Color3(uint8_t,uint8_t,uint8_t)
+  TermColor(uint8_t r, uint8_t g, uint8_t b) : Color3{r, g, b} {}
+
+  /// \copydoc Color3::Color3(uint32_t)
+  TermColor(uint32_t hex) : Color3(hex) {}
 
   /// Creates a terminal color from an existing color.
   ///
   /// \param color The color to convert.
-  TermColor(const Color &color) : Color(color.r, color.g, color.b) {};
+  TermColor(const Color3 &color) : Color3{color.r, color.g, color.b} {}
 
-  /// Formats the color to a terminal control sequence
+  /// Formats the color to a terminal control sequence.
   ///
-  /// \returns An escaped terminal control sequence containing the color
+  /// \returns An escaped terminal control sequence containing the color.
   std::string toControl() {
     char buf[20];
     snprintf(buf, sizeof(buf), "\x1b[38;2;%i;%i;%im", r, g, b);
     return std::string(buf);
   }
 
-  friend std::ostream &operator<<(std::ostream &out, TermColor &color);
+  TermColor lerp(const Color3 &target, float alpha) const {
+    return Color3::lerp(target, alpha);
+  }
+
+  /// An overload that outputs the control sequence to the terminal.
+  ///
+  /// \param out The output stream.
+  /// \param color The Color to be output.
+  /// \see TermColor::toEscape.
+  friend inline std::ostream &operator<<(std::ostream &out, TermColor color) {
+    out << color.toControl();
+    return out;
+  }
 };
 
-inline char TERMCOLOR_RESET[] = "\x1b[0m";
-
-/// An overload that outputs the control sequence to the terminal
-///
-/// \param out The output stream
-/// \param color The Color to be output
-/// \see TermColor::toEscape
-inline std::ostream &operator<<(std::ostream &out, TermColor &color) {
-  out << color.toControl();
-  return out;
-}
+#define TERMCOLOR_RESET "\x1b[0m"
 
 /// Checks whether the terminal environment supports truecolor.
 ///
@@ -66,9 +66,9 @@ inline bool isTrueColor() {
   return colorTerm && std::string(colorTerm) == "truecolor";
 }
 
-/// Sets the terminal's cursor visibility
+/// Sets the terminal's cursor visibility.
 ///
-/// \param show Whether to show or hide the cursor
+/// \param show Whether to show or hide the cursor.
 inline void showCursor(bool show) {
 #if defined(_WIN32)
   static const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -10,48 +10,48 @@
 
 namespace btk {
 namespace progress {
-/// Represents a progress bar
+/// Represents a progress bar.
 class Bar {
 public:
   /// Creates a progress bar with a character length of \size and a maximum
-  /// value of \max
+  /// value of \max.
   ///
-  /// \param size The size in characters of the progress bar
-  /// \param max The maximum value in which progess can reach
+  /// \param size The size in characters of the progress bar.
+  /// \param max The maximum value in which progess can reach.
   Bar(int size, int max) : size(size), max(max) {};
   friend std::ostream &operator<<(std::ostream &out, Bar &bar);
 
   /// Sets the progress of the bar
   ///
-  /// /param prog How far the bar has progressed towards \c max
+  /// /param prog How far the bar has progressed towards \c max.
   void setProgress(float prog) {
     progress = prog;
   }
 
-  /// Sets the progress bar characters
+  /// Sets the progress bar characters.
   ///
   /// Sets the character progression for the progress bar from least filled to
-  /// filled
+  /// filled.
   ///
-  /// \param chars A vector of strings that represent the progression
+  /// \param chars A vector of strings that represent the progression.
   void setCharacters(std::vector<std::string> chars) {
     characters = chars;
     maxCharacter = chars.size() - 1;
   };
 
-  /// Toggles the percentage display to the right of the \c Bar
+  /// Toggles the percentage display to the right of the \c Bar.
   void togglePercent() {
     showPercent = !showPercent;
   }
 
-  /// Toggles the brackets surrounding the \c Bar
+  /// Toggles the brackets surrounding the \c Bar.
   void toggleBrackets() {
     showBrackets = !showBrackets;
   }
 
-  /// Prints a \c Bar to the supplied output stream
+  /// Prints a \c Bar to the supplied output stream.
   ///
-  /// \param out The target output stream
+  /// \param out The target output stream.
   virtual void display(std::ostream &out) {
     float percentage = progress / max;
     float prog = percentage * size;
@@ -97,22 +97,22 @@ inline std::ostream &operator<<(std::ostream &out, Bar &bar) {
   return out;
 }
 
-/// A progress bar with a spinner
+/// A progress bar with a spinner.
 ///
 /// A derivative of the default \ref Bar that adds a spinner on the right side
-/// of the display
+/// of the display.
 class Spinner : public Bar {
 public:
   /// Creates a progress bar with a character length of \size and a maximum
-  /// value of \max
+  /// value of \max.
   ///
-  /// \param size The size in characters of the progress bar
-  /// \param max The maximum value in which progess can reach
+  /// \param size The size in characters of the progress bar.
+  /// \param max The maximum value in which progess can reach.
   Spinner(int size, int max) : Bar(size, max) {}
 
-  /// Prints a \c Spinner to the supplied output stream
+  /// Prints a \c Spinner to the supplied output stream.
   ///
-  /// \param out The target output stream
+  /// \param out The target output stream.
   void display(std::ostream &out) override {
     out << spinner[tick] << " ";
     tick++;
