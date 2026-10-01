@@ -221,8 +221,8 @@ struct Color4 : Color3 {
   /// \param a Alpha channel value
   Color4(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : Color3{r, g, b}, a{a} {}
 
-  /// \copydoc Color3::lerp(Color3, float)
-  Color4 lerp(const Color4 target, float alpha) const {
+  /// \copydoc Color3::lerp(const Color3&, float) const
+  Color4 lerp(const Color4 &target, float alpha) const {
     return {clerp(r, target.r, alpha),
             clerp(g, target.g, alpha),
             clerp(b, target.b, alpha),

@@ -38,6 +38,7 @@ struct TermColor : Color3 {
     return std::string(buf);
   }
 
+  /// \copydoc Color3::lerp(const Color3&, float) const
   TermColor lerp(const Color3 &target, float alpha) const {
     return Color3::lerp(target, alpha);
   }
