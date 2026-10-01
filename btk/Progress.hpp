@@ -9,6 +9,7 @@
 #include <vector>
 
 namespace btk {
+// Container for progress display classes.
 namespace progress {
 /// Represents a progress bar.
 class Bar {
