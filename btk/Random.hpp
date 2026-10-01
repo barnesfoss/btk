@@ -5,9 +5,9 @@
 #include <random>
 
 namespace btk {
-/// A pseudorandom number generator
+/// \brief A pseudorandom number generator.
 ///
-/// Generates a number between a specificed minimum and maximum
+/// Generates a number between a specificed minimum and maximum.
 class Random {
 public:
   /// Creates a pseudorandom number generator with the specified range.

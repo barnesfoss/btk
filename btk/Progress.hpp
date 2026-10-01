@@ -97,7 +97,7 @@ inline std::ostream &operator<<(std::ostream &out, Bar &bar) {
   return out;
 }
 
-/// A progress bar with a spinner.
+/// \brief A progress bar with a spinner.
 ///
 /// A derivative of the default \ref Bar that adds a spinner on the right side
 /// of the display.

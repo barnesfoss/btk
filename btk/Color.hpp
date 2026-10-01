@@ -18,7 +18,7 @@ uint8_t clerp(uint8_t a, uint8_t b, float t) {
 } // namespace
 
 namespace btk {
-/// Represents a Color.
+/// \brief Represents a 3 channel color.
 ///
 /// Stores the red, green, and blue channels as 8-bit unsigned integers.
 struct Color3 {
@@ -207,7 +207,7 @@ enum COLOR : uint32_t {
   YellowGreen = 0x9ACD32,
 };
 
-/// Represents a Color.
+/// \brief Represents a 4 channel color.
 ///
 /// Stores the red, green, blue and alpha channels as 8-bit unsigned integers.
 struct Color4 : Color3 {
