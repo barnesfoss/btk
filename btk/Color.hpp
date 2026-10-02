@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include <algorithm>
 #include <cstdint>
 #include <iostream>
 
@@ -56,6 +57,26 @@ struct Color3 {
         << static_cast<int>(color.b) << ")";
     return out;
   };
+
+  friend bool operator==(const Color3 &color, const Color3 &color2) {
+    return (color.r == color2.r) & (color.g == color2.g) & (color.b == color2.b);
+  };
+
+  friend bool operator!=(const Color3 &color, const Color3 &color2) {
+    return (color.r != color2.r) || (color.g != color2.g) || (color.b != color2.b);
+  };
+
+  friend Color3 operator+(const Color3 &color, const Color3 &color2) {
+    return {static_cast<uint8_t>(std::clamp(color.r + color2.r, 0, 255)),
+            static_cast<uint8_t>(std::clamp(color.g + color2.g, 0, 255)),
+            static_cast<uint8_t>(std::clamp(color.b + color2.b, 0, 255))};
+  }
+
+  friend Color3 operator-(const Color3 &color, const Color3 &color2) {
+    return {static_cast<uint8_t>(std::clamp(color.r - color2.r, 0, 255)),
+            static_cast<uint8_t>(std::clamp(color.g - color2.g, 0, 255)),
+            static_cast<uint8_t>(std::clamp(color.b - color2.b, 0, 255))};
+  }
 
   uint8_t r;
   uint8_t g;
