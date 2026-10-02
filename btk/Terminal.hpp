@@ -8,7 +8,6 @@
 #include <iostream>
 #include <stdint.h>
 #include <string>
-
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -53,8 +52,6 @@ struct TermColor : Color3 {
     return out;
   }
 };
-
-#define TERMCOLOR_RESET "\x1b[0m"
 
 /// Checks whether the terminal environment supports truecolor.
 ///
