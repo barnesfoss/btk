@@ -146,7 +146,7 @@ int runTests(Unit *unit) {
     return result;                                                                                 \
   } while (0)
 
-#define TEST(name, body) TestResult name() body
+#define TEST(name) TestResult name()
 
 #define ASSERT_EQ(a, b)                                                                            \
   do {                                                                                             \
