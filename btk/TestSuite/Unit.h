@@ -21,6 +21,8 @@ extern "C" {
 /*******************************************************************/
 /* Structures */
 /*******************************************************************/
+
+/* Represents a result of a test. */
 typedef struct {
   int failed;
   const char *message;
@@ -28,11 +30,13 @@ typedef struct {
   const char *file;
 } TestResult;
 
+/* A Test object containing the name and the function. */
 typedef struct {
   TestResult (*function)(void);
   const char *name;
 } Test;
 
+/* Represents a Unit within a Unit test. */
 typedef struct {
   const char *name;
   int testCount;
@@ -45,7 +49,13 @@ typedef struct {
 /* Functions */
 /*******************************************************************/
 
-/* Helper functions for allocation error checks */
+/* \brief Internal helper function for allocation error checks.
+ *
+ * Calls malloc and checks success, if not successful abort and throw an error message.
+ *
+ * \param n The size to allocate.
+ * \returns A pointer to the allocated memory.
+ */
 void *__salloc(size_t n) {
   void *p = malloc(n);
   if (p == NULL) {
@@ -55,6 +65,13 @@ void *__salloc(size_t n) {
   return p;
 }
 
+/* \brief Internal helper function for allocation error checks.
+ *
+ * Calls realloc and checks success, if not successful abort and throw an error message.
+ *
+ * \param n The size to allocate.
+ * \returns A pointer to the allocated memory.
+ */
 void *__sralloc(void *original, size_t n) {
   void *p = realloc(original, n);
   if (p == NULL) {
@@ -64,6 +81,13 @@ void *__sralloc(void *original, size_t n) {
   return p;
 }
 
+/* \brief Creats a new Unit test in memory.
+ *
+ * A constructor for the \c Unit struct.
+ *
+ * \param name The name of the unit you are creating.
+ * \returns A newly initialized \c Unit.
+ */
 Unit *createUnit(const char *name) {
   /* We need to add these together */
   int size = sizeof(name) + sizeof(Unit);
@@ -75,6 +99,13 @@ Unit *createUnit(const char *name) {
   return n;
 }
 
+/* \brief Internal function that adds a test to a \c Unit.
+ *
+ * Allocates memory for a new test within a \c Unit and adds it to the list.
+ *
+ * \param unit The unit.
+ * \param test The test added to the unit.
+ */
 void __addTest(Unit *unit, Test test) {
   /* Add the size of the new test to the current size */
   int size_old = unit->testSize;
@@ -86,6 +117,12 @@ void __addTest(Unit *unit, Test test) {
   unit->testSize = size;
 }
 
+/* \brief Runs all the tests within the \c Unit.
+ *
+ * All tests will be run in sequence and output to the terminal, this also destructs the Unit.
+ *
+ * \param unit The unit to run.
+ */
 int runTests(Unit *unit) {
   /* We return this at the end */
   int result;
@@ -145,26 +182,49 @@ int runTests(Unit *unit) {
 /*******************************************************************/
 /* Macros */
 /*******************************************************************/
+
+/* \brief Abstraction for the \c __addTest function.
+ *
+ * Automatically creates a \c Test object when given a test defined with TEST().
+ *
+ * \param unit The unit object we are adding the test to.
+ * \param func The function version of a test.
+ */
 #define ADDTEST(unit, func)                                                                        \
   do {                                                                                             \
     Test t = {func, #func};                                                                        \
     __addTest(unit, t);                                                                            \
   } while (0)
 
+/* \brief Abstraction for a \c TestResult.
+ *
+ * Makes returning a \c TestResult simple by making it function-like call, and automatically inserts
+ * extra data that the user shouldn't have to enter.
+ *
+ * \param failed Whether the test failes or not (True or False).
+ * \param message Associated error message.
+ */
 #define RESULT(failed, message)                                                                    \
   do {                                                                                             \
     TestResult result = {failed, message, __LINE__, __FILE__};                                     \
     return result;                                                                                 \
   } while (0)
 
+/* Returns a successful \c TestResult */
 #define TESTEND                                                                                    \
   do {                                                                                             \
     TestResult result = {0};                                                                       \
     return result;                                                                                 \
   } while (0)
 
+/* \brief Abstraction for a test function definition.
+ *
+ * Internally just represents a function with a \c TestResult return value
+ *
+ */
 #define TEST(name) TestResult name()
 
+/* Asserts whether two values are equivalent, returns a failed TestResult if not.*/
 #define ASSERT_EQ(a, b)                                                                            \
   do {                                                                                             \
     if (!((a) == (b))) {                                                                           \
@@ -172,6 +232,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether two values are not equivalent, returns a failed TestResult if not.*/
 #define ASSERT_NEQ(a, b)                                                                           \
   do {                                                                                             \
     if (!((a) != (b))) {                                                                           \
@@ -179,6 +240,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is true, returns a failed TestResult if not.*/
 #define ASSERT_TRUE(a)                                                                             \
   do {                                                                                             \
     if (!(a)) {                                                                                    \
@@ -186,6 +248,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is false, returns a failed TestResult if not.*/
 #define ASSERT_FALSE(a)                                                                            \
   do {                                                                                             \
     if (a) {                                                                                       \
@@ -193,6 +256,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is NULL, returns a failed TestResult if not.*/
 #define ASSERT_NULL(a)                                                                             \
   do {                                                                                             \
     if ((a) != NULL) {                                                                             \
@@ -200,6 +264,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is not NULL, returns a failed TestResult if not.*/
 #define ASSERT_NNULL(a)                                                                            \
   do {                                                                                             \
     if ((a) == NULL) {                                                                             \
@@ -207,6 +272,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is greater than the other, returns a failed TestResult if not.*/
 #define ASSERT_GT(a, b)                                                                            \
   do {                                                                                             \
     if (!((a) > (b))) {                                                                            \
@@ -214,6 +280,8 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is greater than or equal to the other, returns a failed TestResult if
+ * not.*/
 #define ASSERT_GTE(a, b)                                                                           \
   do {                                                                                             \
     if (!((a) >= (b))) {                                                                           \
@@ -221,6 +289,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is less than than the other, returns a failed TestResult if not.*/
 #define ASSERT_LT(a, b)                                                                            \
   do {                                                                                             \
     if (!((a) < (b))) {                                                                            \
@@ -228,6 +297,8 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether a value is less than than or equal to the other, returns a failed TestResult if
+ * not.*/
 #define ASSERT_LTE(a, b)                                                                           \
   do {                                                                                             \
     if (!((a) <= (b))) {                                                                           \
@@ -235,6 +306,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether two strings are equivalent, returns a failed TestResult if not.*/
 #define ASSERT_STR_EQ(a, b)                                                                        \
   do {                                                                                             \
     if (strcmp((a), (b)) != 0) {                                                                   \
@@ -242,6 +314,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether two strings are not equivalent, returns a failed TestResult if not.*/
 #define ASSERT_STR_NEQ(a, b)                                                                       \
   do {                                                                                             \
     if (strcmp((a), (b)) == 0) {                                                                   \
@@ -249,6 +322,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether two memory objects are equivalent, returns a failed TestResult if not.*/
 #define ASSERT_MEM_EQ(a, b)                                                                        \
   do {                                                                                             \
     if (memcmp((a), (b), (size)) == 0) {                                                           \
@@ -256,6 +330,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Asserts whether two memory objects not equivalent, returns a failed TestResult if not.*/
 #define ASSERT_MEM_NEQ(a, b)                                                                       \
   do {                                                                                             \
     if (memcmp((a), (b), (size)) == 0) {                                                           \
@@ -263,6 +338,7 @@ int runTests(Unit *unit) {
     }                                                                                              \
   } while (0)
 
+/* Returns a failing result saying "This feature is unimplemented". */
 #define UNIMPLEMENTED RESULT(1, "This feature is unimplemented.");
 
 #endif
