@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: MIT
  * File: Unit.h
  * Tiny & standalone C89 unit tester
- *
- *
- * TODO: Add error checks for memallocs
  */
 
 #ifndef BTK_TESTSUITE_UNIT_H
@@ -47,10 +44,30 @@ typedef struct {
 /*******************************************************************/
 /* Functions */
 /*******************************************************************/
+
+/* Helper functions for allocation error checks */
+void *__salloc(size_t n) {
+  void *p = malloc(n);
+  if (p == NULL) {
+    fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
+    abort();
+  }
+  return p;
+}
+
+void *__sralloc(void *original, size_t n) {
+  void *p = realloc(original, n);
+  if (p == NULL) {
+    fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
+    abort();
+  }
+  return p;
+}
+
 Unit *createUnit(const char *name) {
   /* We need to add these together */
   int size = sizeof(name) + sizeof(Unit);
-  Unit *n = (Unit *)malloc(size);
+  Unit *n = (Unit *)__salloc(size);
   n->name = name;
   n->testCount = 0;
   n->failed = 0;
@@ -62,7 +79,7 @@ void __addTest(Unit *unit, Test test) {
   /* Add the size of the new test to the current size */
   int size_old = unit->testSize;
   int size = size_old + sizeof(test);
-  unit->tests = (Test *)realloc(unit->tests, size);
+  unit->tests = (Test *)__sralloc(unit->tests, size);
   /* Add the new values to the reallocated array */
   unit->tests[unit->testCount] = test;
   unit->testCount++;
@@ -74,7 +91,7 @@ int runTests(Unit *unit) {
   int result;
 
   /* Allocate space for the results */
-  TestResult *results = (TestResult *)malloc(sizeof(TestResult) * unit->testCount);
+  TestResult *results = (TestResult *)__salloc(sizeof(TestResult) * unit->testCount);
 
   /* Iterator */
   int i = unit->testCount;
