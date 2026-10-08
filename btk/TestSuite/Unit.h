@@ -14,6 +14,7 @@
 extern "C" {
 #endif
 
+#include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -323,7 +324,7 @@ int runTests(Unit *unit) {
   } while (0)
 
 /* Asserts whether two memory objects are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_MEM_EQ(a, b)                                                                        \
+#define ASSERT_MEM_EQ(a, b, size)                                                                  \
   do {                                                                                             \
     if (memcmp((a), (b), (size)) == 0) {                                                           \
       RESULT(1, "MEM_EQ assertion failed\n\t\ta!=b\n\t\ta=" #a "\n\t\tb=" #b);                     \
@@ -331,7 +332,7 @@ int runTests(Unit *unit) {
   } while (0)
 
 /* Asserts whether two memory objects not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_MEM_NEQ(a, b)                                                                       \
+#define ASSERT_MEM_NEQ(a, b, size)                                                                 \
   do {                                                                                             \
     if (memcmp((a), (b), (size)) == 0) {                                                           \
       RESULT(1, "MEM_NEQ assertion failed\n\t\ta!=b\n\t\ta=" #a "\n\t\tb=" #b);                    \
