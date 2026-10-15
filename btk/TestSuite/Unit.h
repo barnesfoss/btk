@@ -10,9 +10,9 @@
 #ifndef BTK_TESTSUITE_UNIT_H
 #define BTK_TESTSUITE_UNIT_H
 #include <memory.h>
-#include <stdio.h>
+#include <stdio.h> // IWYU pragma: export
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> // IWYU pragma: export
 
 /*******************************************************************/
 /* Structures */

@@ -10,8 +10,8 @@
 #ifndef BTK_TESTSUITE_BENCHMARK_H
 #define BTK_TESTSUITE_BENCHMARK_H
 #include <inttypes.h>
-#include <stdio.h>
-#include <time.h>
+#include <stdio.h> // IWYU pragma: export
+#include <time.h>  // IWYU pragma: export
 #define BENCH_MEASURE(func, ...)                                                                   \
   struct timespec start, end;                                                                      \
   clock_gettime(CLOCK_MONOTONIC, &start);                                                          \
