@@ -207,7 +207,7 @@ BTK_INLINE int runTests(Unit *unit) {
  * Makes returning a \c TestResult simple by making it function-like call, and automatically inserts
  * extra data that the user shouldn't have to enter.
  *
- * \param failed Whether the test failes or not (True or False).
+ * \param failed Whether the test fails or not (True or False).
  * \param message Associated error message.
  */
 #define RESULT(failed, message)                                                                    \
