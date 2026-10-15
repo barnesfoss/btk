@@ -7,16 +7,6 @@
 
 #ifndef BTK_TESTSUITE_UNIT_H
 #define BTK_TESTSUITE_UNIT_H
-
-/* This is written in C, so C++ will need to define it as an extern to make the compiler not
- * complain */
-#ifdef __cplusplus
-extern "C" {
-#define BTK_INLINE inline
-#else
-#define BTK_INLINE
-#endif
-
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,9 +40,13 @@ typedef struct {
 } Unit;
 
 /*******************************************************************/
-/* Functions */
+/* Function Definitions*/
 /*******************************************************************/
-
+/* This is written in C, so C++ will need to define it as an extern to make the compiler not
+ * complain */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* \brief Internal helper function for allocation error checks.
  *
  * Calls malloc and checks success, if not successful abort and throw an error message.
@@ -60,14 +54,7 @@ typedef struct {
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
  */
-BTK_INLINE void *__salloc(size_t n) {
-  void *p = malloc(n);
-  if (p == NULL) {
-    fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
-    abort();
-  }
-  return p;
-}
+void *__salloc(size_t n);
 
 /* \brief Internal helper function for allocation error checks.
  *
@@ -76,14 +63,7 @@ BTK_INLINE void *__salloc(size_t n) {
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
  */
-BTK_INLINE void *__sralloc(void *original, size_t n) {
-  void *p = realloc(original, n);
-  if (p == NULL) {
-    fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
-    abort();
-  }
-  return p;
-}
+void *__sralloc(void *original, size_t n);
 
 /* \brief Creates a new Unit test in memory.
  *
@@ -92,17 +72,7 @@ BTK_INLINE void *__sralloc(void *original, size_t n) {
  * \param name The name of the unit you are creating.
  * \returns A newly initialized \c Unit.
  */
-BTK_INLINE Unit *createUnit(const char *name) {
-  /* We need to add these together */
-  int size = sizeof(Unit);
-  Unit *n = (Unit *)__salloc(size);
-  n->name = name;
-  n->testCount = 0;
-  n->failed = 0;
-  n->testSize = 0;
-  n->tests = NULL;
-  return n;
-}
+Unit *createUnit(const char *name);
 
 /* \brief Internal function that adds a test to a \c Unit.
  *
@@ -111,16 +81,7 @@ BTK_INLINE Unit *createUnit(const char *name) {
  * \param unit The unit.
  * \param test The test added to the unit.
  */
-BTK_INLINE void __addTest(Unit *unit, Test test) {
-  /* Add the size of the new test to the current size */
-  int size_old = unit->testSize;
-  int size = size_old + sizeof(test);
-  unit->tests = (Test *)__sralloc(unit->tests, size);
-  /* Add the new values to the reallocated array */
-  unit->tests[unit->testCount] = test;
-  unit->testCount++;
-  unit->testSize = size;
-}
+void __addTest(Unit *unit, Test test);
 
 /* \brief Runs all the tests within the \c Unit.
  *
@@ -128,63 +89,10 @@ BTK_INLINE void __addTest(Unit *unit, Test test) {
  *
  * \param unit The unit to run.
  */
-BTK_INLINE int runTests(Unit *unit) {
-  /* We return this at the end */
-  int result;
-
-  /* Allocate space for the results */
-  TestResult *results = (TestResult *)__salloc(sizeof(TestResult) * unit->testCount);
-
-  /* Iterator */
-  int i = unit->testCount;
-
-  while (i-- > 0) {
-    /* Call the function and get the TestResult */
-    Test t = unit->tests[i];
-    TestResult result = (t.function)();
-    results[i] = result;
-    if (result.failed) {
-      /* If one test fails the whole unit fails */
-      unit->failed = 1;
-    }
-  }
-
-  /* Print whether the unit succeeded */
-  if (unit->failed) {
-    printf("\x1b[31m[-] %s\x1b[0m\n", unit->name);
-  } else {
-    printf("\x1b[32m[+] %s\x1b[0m\n", unit->name);
-  }
-
-  /* Print each test result */
-  while (i++ < unit->testCount - 1) {
-    TestResult result = results[i];
-    Test t = unit->tests[i];
-    if (result.failed) {
-      printf("\t\x1b[31m[-] %s at line %i in %s with:\n\t\t%s\x1b[0m\n",
-             t.name,
-             result.line,
-             result.file,
-             result.message);
-    } else {
-      printf("\t\x1b[32m[+] %s\x1b[0m\n", t.name);
-    }
-  }
-
-  /* Move here to avoid UAF */
-  result = unit->failed;
-
-  /* Free after the unit has been run */
-  free(unit->tests);
-  free(unit);
-  free(results);
-  return result;
-}
+int runTests(Unit *unit);
 #ifdef __cplusplus
 }
 #endif
-#undef BTK_INLINE
-
 /*******************************************************************/
 /* Macros */
 /*******************************************************************/
@@ -347,4 +255,113 @@ BTK_INLINE int runTests(Unit *unit) {
 /* Returns a failing result saying "This feature is unimplemented". */
 #define UNIMPLEMENTED RESULT(1, "This feature is unimplemented.");
 
+#endif
+
+#ifdef BTK_UNIT_IMPL
+#undef BTK_UNIT_IMPL
+/* This is written in C, so C++ will need to define it as an extern to make the compiler not
+ * complain */
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*******************************************************************/
+/* Function Implementations*/
+/*******************************************************************/
+
+void *__salloc(size_t n) {
+  void *p = malloc(n);
+  if (p == NULL) {
+    fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
+    abort();
+  }
+  return p;
+}
+
+void *__sralloc(void *original, size_t n) {
+  void *p = realloc(original, n);
+  if (p == NULL) {
+    fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
+    abort();
+  }
+  return p;
+}
+
+Unit *createUnit(const char *name) {
+  /* We need to add these together */
+  int size = sizeof(Unit);
+  Unit *n = (Unit *)__salloc(size);
+  n->name = name;
+  n->testCount = 0;
+  n->failed = 0;
+  n->testSize = 0;
+  n->tests = NULL;
+  return n;
+}
+
+void __addTest(Unit *unit, Test test) {
+  /* Add the size of the new test to the current size */
+  int size_old = unit->testSize;
+  int size = size_old + sizeof(test);
+  unit->tests = (Test *)__sralloc(unit->tests, size);
+  /* Add the new values to the reallocated array */
+  unit->tests[unit->testCount] = test;
+  unit->testCount++;
+  unit->testSize = size;
+}
+
+int runTests(Unit *unit) {
+  /* We return this at the end */
+  int result;
+
+  /* Allocate space for the results */
+  TestResult *results = (TestResult *)__salloc(sizeof(TestResult) * unit->testCount);
+
+  /* Iterator */
+  int i = unit->testCount;
+
+  while (i-- > 0) {
+    /* Call the function and get the TestResult */
+    Test t = unit->tests[i];
+    TestResult result = (t.function)();
+    results[i] = result;
+    if (result.failed) {
+      /* If one test fails the whole unit fails */
+      unit->failed = 1;
+    }
+  }
+
+  /* Print whether the unit succeeded */
+  if (unit->failed) {
+    printf("\x1b[31m[-] %s\x1b[0m\n", unit->name);
+  } else {
+    printf("\x1b[32m[+] %s\x1b[0m\n", unit->name);
+  }
+
+  /* Print each test result */
+  while (i++ < unit->testCount - 1) {
+    TestResult result = results[i];
+    Test t = unit->tests[i];
+    if (result.failed) {
+      printf("\t\x1b[31m[-] %s at line %i in %s with:\n\t\t%s\x1b[0m\n",
+             t.name,
+             result.line,
+             result.file,
+             result.message);
+    } else {
+      printf("\t\x1b[32m[+] %s\x1b[0m\n", t.name);
+    }
+  }
+
+  /* Move here to avoid UAF */
+  result = unit->failed;
+
+  /* Free after the unit has been run */
+  free(unit->tests);
+  free(unit);
+  free(results);
+  return result;
+}
+#ifdef __cplusplus
+}
+#endif
 #endif
