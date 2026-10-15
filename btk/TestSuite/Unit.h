@@ -12,6 +12,9 @@
  * complain */
 #ifdef __cplusplus
 extern "C" {
+#define BTK_INLINE inline
+#else
+#define BTK_INLINE
 #endif
 
 #include <memory.h>
@@ -57,7 +60,7 @@ typedef struct {
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
  */
-void *__salloc(size_t n) {
+BTK_INLINE void *__salloc(size_t n) {
   void *p = malloc(n);
   if (p == NULL) {
     fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
@@ -73,7 +76,7 @@ void *__salloc(size_t n) {
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
  */
-void *__sralloc(void *original, size_t n) {
+BTK_INLINE void *__sralloc(void *original, size_t n) {
   void *p = realloc(original, n);
   if (p == NULL) {
     fprintf(stderr, "Fatal: failed to allocate %zu bytes.\n", n);
@@ -89,7 +92,7 @@ void *__sralloc(void *original, size_t n) {
  * \param name The name of the unit you are creating.
  * \returns A newly initialized \c Unit.
  */
-Unit *createUnit(const char *name) {
+BTK_INLINE Unit *createUnit(const char *name) {
   /* We need to add these together */
   int size = sizeof(Unit);
   Unit *n = (Unit *)__salloc(size);
@@ -108,7 +111,7 @@ Unit *createUnit(const char *name) {
  * \param unit The unit.
  * \param test The test added to the unit.
  */
-void __addTest(Unit *unit, Test test) {
+BTK_INLINE void __addTest(Unit *unit, Test test) {
   /* Add the size of the new test to the current size */
   int size_old = unit->testSize;
   int size = size_old + sizeof(test);
@@ -125,7 +128,7 @@ void __addTest(Unit *unit, Test test) {
  *
  * \param unit The unit to run.
  */
-int runTests(Unit *unit) {
+BTK_INLINE int runTests(Unit *unit) {
   /* We return this at the end */
   int result;
 
@@ -180,6 +183,7 @@ int runTests(Unit *unit) {
 #ifdef __cplusplus
 }
 #endif
+#undef BTK_INLINE
 
 /*******************************************************************/
 /* Macros */
