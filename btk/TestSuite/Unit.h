@@ -54,7 +54,7 @@ extern "C" {
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
  */
-void *__salloc(size_t n);
+// void *__salloc(size_t n);
 
 /* \brief Internal helper function for allocation error checks.
  *
@@ -63,7 +63,7 @@ void *__salloc(size_t n);
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
  */
-void *__sralloc(void *original, size_t n);
+// void *__sralloc(void *original, size_t n);
 
 /* \brief Creates a new Unit test in memory.
  *
