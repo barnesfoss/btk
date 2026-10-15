@@ -134,11 +134,6 @@ int runTests(Unit *unit) {
   /* Iterator */
   int i = unit->testCount;
 
-  if (!i) {
-    free(results);
-    return 0;
-  }
-
   while (i-- > 0) {
     /* Call the function and get the TestResult */
     Test t = unit->tests[i];
