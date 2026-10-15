@@ -85,7 +85,7 @@ BTK_INLINE void *__sralloc(void *original, size_t n) {
   return p;
 }
 
-/* \brief Creats a new Unit test in memory.
+/* \brief Creates a new Unit test in memory.
  *
  * A constructor for the \c Unit struct.
  *
