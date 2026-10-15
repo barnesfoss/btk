@@ -333,9 +333,12 @@ int runTests(Unit *unit) {
   /* Print whether the unit succeeded */
   if (unit->failed) {
     printf("\x1b[31m[-] %s\x1b[0m\n", unit->name);
-  } else {
+  }
+#ifndef BTK_UNIT_HIDESUCCESS
+  else {
     printf("\x1b[32m[+] %s\x1b[0m\n", unit->name);
   }
+#endif
 
   /* Print each test result */
   while (i++ < unit->testCount - 1) {
@@ -347,9 +350,12 @@ int runTests(Unit *unit) {
              result.line,
              result.file,
              result.message);
-    } else {
+    }
+#ifndef BTK_UNIT_HIDESUCCESS
+    else {
       printf("\t\x1b[32m[+] %s\x1b[0m\n", t.name);
     }
+#endif
   }
 
   /* Move here to avoid UAF */
