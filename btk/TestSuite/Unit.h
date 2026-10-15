@@ -91,7 +91,7 @@ void *__sralloc(void *original, size_t n) {
  */
 Unit *createUnit(const char *name) {
   /* We need to add these together */
-  int size = sizeof(name) + sizeof(Unit);
+  int size = sizeof(Unit);
   Unit *n = (Unit *)__salloc(size);
   n->name = name;
   n->testCount = 0;
