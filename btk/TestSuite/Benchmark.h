@@ -1,7 +1,14 @@
-// Copyright Kameron Barnes
-// SPDX-License-Identifier: MIT
+/*
+ * Copyright Kameron Barnes
+ * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
+ * File: Benchmark.h
+ * C compatible time benchmark macros
+ */
 
-#pragma once
+#ifndef BTK_TESTSUITE_BENCHMARK_H
+#define BTK_TESTSUITE_BENCHMARK_H
 #include <inttypes.h>
 #include <stdio.h>
 #include <time.h>
@@ -37,3 +44,4 @@
                                                                                                    \
     printf(#func ": %lld ns total, %.3f ns/call\n", (long long)total, (double)total / (n));        \
   } while (0)
+#endif

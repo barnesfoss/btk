@@ -1,7 +1,14 @@
-// Copyright Kameron Barnes
-// SPDX-License-Identifier: MIT
+/*
+ * Copyright Kameron Barnes
+ * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
+ * File: Random.hpp
+ * Mersenne twister-based random class.
+ */
 
-#pragma once
+#ifndef BTK_RANDOM_H
+#define BTK_RANDOM_H
 #include <random>
 
 namespace btk {
@@ -49,3 +56,4 @@ private:
   std::uniform_int_distribution<int> dis;
 };
 } // namespace btk
+#endif

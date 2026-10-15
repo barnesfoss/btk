@@ -1,24 +1,31 @@
-// Copyright Kameron Barnes
-// SPDX-License-Identifier: MIT
+/*
+ * Copyright Kameron Barnes
+ * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
+ * File: Color.hpp
+ * Base Color classes
+ */
 
-#pragma once
+#ifndef BTK_COLOR_HPP
+#define BTK_COLOR_HPP
 #include <algorithm>
 #include <cstdint>
 #include <iostream>
 
-namespace {
+namespace btk {
+namespace color::detail {
 /// Lerp between colors.
 ///
 /// This is a function used internally to prevent repetitiveness.
 /// \param a The base uint8.
 /// \param b The target uint8.
 /// \param t The progress towards the target.
-uint8_t clerp(uint8_t a, uint8_t b, float t) {
+inline uint8_t clerp(uint8_t a, uint8_t b, float t) {
   return a + t * (b - a);
 }
-} // namespace
+} // namespace color::detail
 
-namespace btk {
 /// \brief Represents a 3 channel color.
 ///
 /// Stores the red, green, and blue channels as 8-bit unsigned integers.
@@ -45,7 +52,9 @@ struct Color3 {
   /// \param target The target color.
   /// \param alpha The progress towards the target.
   Color3 lerp(const Color3 &target, float alpha) const {
-    return {clerp(r, target.r, alpha), clerp(g, target.g, alpha), clerp(b, target.b, alpha)};
+    return {color::detail::clerp(r, target.r, alpha),
+            color::detail::clerp(g, target.g, alpha),
+            color::detail::clerp(b, target.b, alpha)};
   }
 
   /// Outputs the color in a human-readable format.
@@ -244,10 +253,10 @@ struct Color4 : Color3 {
 
   /// \copydoc Color3::lerp(const Color3&, float) const
   Color4 lerp(const Color4 &target, float alpha) const {
-    return {clerp(r, target.r, alpha),
-            clerp(g, target.g, alpha),
-            clerp(b, target.b, alpha),
-            clerp(a, target.a, alpha)};
+    return {color::detail::clerp(r, target.r, alpha),
+            color::detail::clerp(g, target.g, alpha),
+            color::detail::clerp(b, target.b, alpha),
+            color::detail::clerp(a, target.a, alpha)};
   }
 
   /// Outputs the color in a human-readable format.
@@ -263,3 +272,4 @@ struct Color4 : Color3 {
   uint8_t a;
 };
 } // namespace btk
+#endif

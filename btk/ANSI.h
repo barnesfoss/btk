@@ -1,8 +1,14 @@
-// Copyright Kameron Barnes
-// SPDX-License-Identifier: MIT
+/*
+ * Copyright Kameron Barnes
+ * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
+ * File: ANSI.h
+ * Definitions for all standard ANSI colors
+ */
 
-#pragma once
-
+#ifndef BTK_ANSI_H
+#define BTK_ANSI_H
 #define ANSI_DEFINE(name, value) static const char *name = value
 
 /* ANSI Control Sequences */
@@ -63,3 +69,4 @@ ANSI_DEFINE(ANSI_BRIGHT_CYAN_BACKGROUND, "\x1b[106m");
 ANSI_DEFINE(ANSI_BRIGHT_WHITE_BACKGROUND, "\x1b[107m");
 
 #undef ANSI_DEFINE
+#endif

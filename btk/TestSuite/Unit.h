@@ -1,6 +1,8 @@
 /*
  * Copyright Kameron Barnes
  * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
  * File: Unit.h
  * Tiny & standalone C89 unit tester
  */

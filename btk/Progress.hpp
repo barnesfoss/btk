@@ -1,7 +1,14 @@
-// Copyright Kameron Barnes
-// SPDX-License-Identifier: MIT
+/*
+ * Copyright Kameron Barnes
+ * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
+ * File: Progress.hpp
+ * Utilities for creating terminal progress bars
+ */
 
-#pragma once
+#ifndef BTK_PROGRESS_H
+#define BTK_PROGRESS_H
 #include "stdint.h"
 
 #include <iostream>
@@ -140,3 +147,4 @@ private:
 };
 } // namespace progress
 } // namespace btk
+#endif

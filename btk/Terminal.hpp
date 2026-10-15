@@ -1,7 +1,14 @@
-// Copyright Kameron Barnes
-// SPDX-License-Identifier: MIT
+/*
+ * Copyright Kameron Barnes
+ * SPDX-License-Identifier: MIT
+ * Part of the btk library
+ *
+ * File: Terminal.hpp
+ * Utilities for controlling the terminal.
+ */
 
-#pragma once
+#ifndef BTK_TERMINAL_H
+#define BTK_TERMINAL_H
 #include "Color.hpp"
 
 #include <cstdlib>
@@ -79,3 +86,4 @@ inline void showCursor(bool show) {
 #endif
 }
 } // namespace btk
+#endif
