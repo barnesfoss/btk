@@ -97,6 +97,7 @@ Unit *createUnit(const char *name) {
   n->testCount = 0;
   n->failed = 0;
   n->testSize = 0;
+  n->tests = NULL;
   return n;
 }
 
