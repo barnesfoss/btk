@@ -266,7 +266,7 @@ TestResult __result(char failed,
 /* Asserts whether two memory objects are equivalent, returns a failed TestResult if not.*/
 #define ASSERT_MEM_EQ_MSG(a, b, size, extra)                                                       \
   do {                                                                                             \
-    if (memcmp((a), (b), (size))) {                                                                \
+    if (memcmp(a, b, size)) {                                                                      \
       return __result(1, 12, 0, #a, #b, __LINE__, __FILE__, extra);                                \
     }                                                                                              \
   } while (0)
@@ -275,7 +275,7 @@ TestResult __result(char failed,
 /* Asserts whether two memory objects not equivalent, returns a failed TestResult if not.*/
 #define ASSERT_MEM_NEQ_MSG(a, b, size, extra)                                                      \
   do {                                                                                             \
-    if (!memcmp((a), (b), (size))) {                                                               \
+    if (!memcmp(a, b, (size))) {                                                                   \
       return __result(1, 13, 1, #a, #b, __LINE__, __FILE__, extra);                                \
     }                                                                                              \
   } while (0)
