@@ -20,10 +20,13 @@
 
 /* Represents a result of a test. */
 typedef struct {
-  int failed;
+  char failed;
   const char *message;
   int line;
   const char *file;
+  char amessage; // Whether the message was dynamically allocated
+                 // We need to check this to be sure we are freeing something that can actually be
+                 // freed since the new optimizations allocate memory for these
 } TestResult;
 
 /* A Test object containing the name and the function. */
@@ -36,8 +39,8 @@ typedef struct {
 typedef struct {
   const char *name;
   int testCount;
-  int failed;
-  int testSize;
+  char failed;
+  size_t testSize;
   Test *tests;
 } Unit;
 
@@ -92,6 +95,16 @@ void __addTest(Unit *unit, Test test);
  * \param unit The unit to run.
  */
 int runTests(Unit *unit);
+
+TestResult __result(char failed,
+                    char type,
+                    char comparison,
+                    const char *a,
+                    const char *b,
+                    size_t line,
+                    const char *file,
+                    const char *extra);
+
 #ifdef __cplusplus
 }
 #endif
@@ -122,7 +135,7 @@ int runTests(Unit *unit);
  */
 #define RESULT(failed, message)                                                                    \
   do {                                                                                             \
-    TestResult result = {failed, message, __LINE__, __FILE__};                                     \
+    TestResult result = {failed, message, __LINE__, __FILE__, 0};                                  \
     return result;                                                                                 \
   } while (0)
 
@@ -141,124 +154,138 @@ int runTests(Unit *unit);
 #define TEST(name) TestResult name()
 
 /* Asserts whether two values are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_EQ(a, b)                                                                            \
+#define ASSERT_EQ_MSG(a, b, extra)                                                                 \
   do {                                                                                             \
     if (!((a) == (b))) {                                                                           \
-      RESULT(1, "EQ assertion failed\n\t\ta==b\n\t\ta=" #a "\n\t\tb=" #b);                         \
+      return __result(1, 0, 0, #a, #b, __LINE__, __FILE__, extra);                                 \
     }                                                                                              \
   } while (0)
+#define ASSERT_EQ(a, b) ASSERT_EQ_MSG(a, b, NULL)
 
 /* Asserts whether two values are not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_NEQ(a, b)                                                                           \
+#define ASSERT_NEQ_MSG(a, b, extra)                                                                \
   do {                                                                                             \
     if (!((a) != (b))) {                                                                           \
-      RESULT(1, "NEQ assertion failed\n\t\ta!=b\n\t\ta=" #a "\n\t\tb=" #b);                        \
+      return __result(1, 1, 1, #a, #b, __LINE__, __FILE__, extra);                                 \
     }                                                                                              \
   } while (0)
+#define ASSERT_NEQ(a, b) ASSERT_NEQ_MSG(a, b, NULL)
 
 /* Asserts whether a value is true, returns a failed TestResult if not.*/
-#define ASSERT_TRUE(a)                                                                             \
+#define ASSERT_TRUE_MSG(a, extra)                                                                  \
   do {                                                                                             \
     if (!(a)) {                                                                                    \
-      RESULT(1, "TRUE assertion failed\n\t\t" #a);                                                 \
+      return __result(1, 2, 0, #a, FAIL_STRINGS[1], __LINE__, __FILE__, extra);                    \
     }                                                                                              \
   } while (0)
+#define ASSERT_TRUE(a) ASSERT_TRUE_MSG(a, NULL)
 
 /* Asserts whether a value is false, returns a failed TestResult if not.*/
-#define ASSERT_FALSE(a)                                                                            \
+#define ASSERT_FALSE_MSG(a, extra)                                                                 \
   do {                                                                                             \
     if (a) {                                                                                       \
-      RESULT(1, "FALSE assertion failed\n\t\t" #a);                                                \
+      return __result(1, 3, 0, #a, FAIL_STRINGS[0], __LINE__, __FILE__, extra);                    \
     }                                                                                              \
   } while (0)
+#define ASSERT_FALSE(a) ASSERT_FALSE_MSG(a, NULL)
 
 /* Asserts whether a value is NULL, returns a failed TestResult if not.*/
-#define ASSERT_NULL(a)                                                                             \
+#define ASSERT_NULL_MSG(a, extra)                                                                  \
   do {                                                                                             \
     if ((a) != NULL) {                                                                             \
-      RESULT(1, "NULL assertion failed\n\t\t" #a);                                                 \
+      return __result(1, 4, 0, #a, FAIL_STRINGS[2], __LINE__, __FILE__, extra);                    \
     }                                                                                              \
   } while (0)
+#define ASSERT_NULL(a) ASSERT_NULL_MSG(a, NULL)
 
 /* Asserts whether a value is not NULL, returns a failed TestResult if not.*/
-#define ASSERT_NNULL(a)                                                                            \
+#define ASSERT_NNULL_MSG(a, extra)                                                                 \
   do {                                                                                             \
     if ((a) == NULL) {                                                                             \
-      RESULT(1, "NNULL assertion failed\n\t\t" #a);                                                \
+      return __result(1, 5, 1, #a, FAIL_STRINGS[2], __LINE__, __FILE__, extra);                    \
     }                                                                                              \
   } while (0)
+#define ASSERT_NNULL(a) ASSERT_NNULL_MSG(a, NULL)
 
 /* Asserts whether a value is greater than the other, returns a failed TestResult if not.*/
-#define ASSERT_GT(a, b)                                                                            \
+#define ASSERT_GT_MSG(a, b, extra)                                                                 \
   do {                                                                                             \
     if (!((a) > (b))) {                                                                            \
-      RESULT(1, "GT assertion failed\n\t\ta>b\n\t\ta=" #a "\n\t\tb=" #b);                          \
+      return __result(1, 6, 4, #a, #b, __LINE__, __FILE__, extra);                                 \
     }                                                                                              \
   } while (0)
+#define ASSERT_GT(a, b) ASSERT_GT_MSG(a, b, NULL)
 
 /* Asserts whether a value is greater than or equal to the other, returns a failed TestResult if
  * not.*/
-#define ASSERT_GTE(a, b)                                                                           \
+#define ASSERT_GTE_MSG(a, b, extra)                                                                \
   do {                                                                                             \
     if (!((a) >= (b))) {                                                                           \
-      RESULT(1, "GTE assertion failed\n\t\ta>=b\n\t\ta=" #a "\n\t\tb=" #b);                        \
+      return __result(1, 7, 5, #a, #b, __LINE__, __FILE__, extra);                                 \
     }                                                                                              \
   } while (0)
+#define ASSERT_GTE(a, b) ASSERT_GTE_MSG(a, b, NULL)
 
 /* Asserts whether a value is less than than the other, returns a failed TestResult if not.*/
-#define ASSERT_LT(a, b)                                                                            \
+#define ASSERT_LT_MSG(a, b, extra)                                                                 \
   do {                                                                                             \
     if (!((a) < (b))) {                                                                            \
-      RESULT(1, "LT assertion failed\n\t\ta<b\n\t\ta=" #a "\n\t\tb=" #b);                          \
+      return __result(1, 8, 6, #a, #b, __LINE__, __FILE__, extra);                                 \
     }                                                                                              \
   } while (0)
+#define ASSERT_LT(a, b) ASSERT_LT_MSG(a, b, NULL)
 
 /* Asserts whether a value is less than than or equal to the other, returns a failed TestResult if
  * not.*/
-#define ASSERT_LTE(a, b)                                                                           \
+#define ASSERT_LTE_MSG(a, b, extra)                                                                \
   do {                                                                                             \
     if (!((a) <= (b))) {                                                                           \
-      RESULT(1, "LTE assertion failed\n\t\ta<=b\n\t\ta=" #a "\n\t\tb=" #b);                        \
+      return __result(1, 9, 7, #a, #b, __LINE__, __FILE__, extra);                                 \
     }                                                                                              \
   } while (0)
+#define ASSERT_LTE(a, b) ASSERT_LTE_MSG(a, b, NULL)
 
 /* Asserts whether two strings are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_STR_EQ(a, b)                                                                        \
+#define ASSERT_STR_EQ_MSG(a, b, extra)                                                             \
   do {                                                                                             \
-    if (strcmp((a), (b)) != 0) {                                                                   \
-      RESULT(1, "STR_EQ assertion failed\n\t\ta==b\n\t\ta=" #a "\n\t\tb=" #b);                     \
+    if (strcmp((a), (b))) {                                                                        \
+      return __result(1, 10, 0, #a, #b, __LINE__, __FILE__, extra);                                \
     }                                                                                              \
   } while (0)
+#define ASSERT_STR_EQ(a, b) ASSERT_STR_EQ_MSG(a, b, NULL)
 
 /* Asserts whether two strings are not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_STR_NEQ(a, b)                                                                       \
+#define ASSERT_STR_NEQ_MSG(a, b, extra)                                                            \
   do {                                                                                             \
-    if (strcmp((a), (b)) == 0) {                                                                   \
-      RESULT(1, "STR_NEQ assertion failed\n\t\ta!=b\n\t\ta=" #a "\n\t\tb=" #b);                    \
+    if (!strcmp((a), (b))) {                                                                       \
+      return __result(1, 11, 1, #a, #b, __LINE__, __FILE__, extra);                                \
     }                                                                                              \
   } while (0)
+#define ASSERT_STR_NEQ(a, b) ASSERT_STR_NEQ_MSG(a, b, NULL)
 
 /* Asserts whether two memory objects are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_MEM_EQ(a, b, size)                                                                  \
+#define ASSERT_MEM_EQ_MSG(a, b, size, extra)                                                       \
   do {                                                                                             \
-    if (memcmp((a), (b), (size)) == 0) {                                                           \
-      RESULT(1, "MEM_EQ assertion failed\n\t\ta!=b\n\t\ta=" #a "\n\t\tb=" #b);                     \
+    if (memcmp((a), (b), (size))) {                                                                \
+      return __result(1, 12, 0, #a, #b, __LINE__, __FILE__, extra);                                \
     }                                                                                              \
   } while (0)
+#define ASSERT_MEM_EQ(a, b, size) ASSERT_MEM_EQ_MSG(a, b, size, NULL)
 
 /* Asserts whether two memory objects not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_MEM_NEQ(a, b, size)                                                                 \
+#define ASSERT_MEM_NEQ_MSG(a, b, size, extra)                                                      \
   do {                                                                                             \
-    if (memcmp((a), (b), (size)) == 0) {                                                           \
-      RESULT(1, "MEM_NEQ assertion failed\n\t\ta!=b\n\t\ta=" #a "\n\t\tb=" #b);                    \
+    if (!memcmp((a), (b), (size))) {                                                               \
+      return __result(1, 13, 1, #a, #b, __LINE__, __FILE__, extra);                                \
     }                                                                                              \
   } while (0)
+#define ASSERT_MEM_NEQ(a, b, size) ASSERT_MEM_NEQ_MSG(a, b, size, NULL)
 
 /* Returns a failing result saying "This feature is unimplemented". */
 #define UNIMPLEMENTED RESULT(1, "This feature is unimplemented.");
 
 #endif
-
+// #define BTK_UNIT_IMPL
 #ifdef BTK_UNIT_IMPL
 #undef BTK_UNIT_IMPL
 /* This is written in C, so C++ will need to define it as an extern to make the compiler not
@@ -287,6 +314,49 @@ void *__sralloc(void *original, size_t n) {
   }
   return p;
 }
+
+const char *ASSERT_NAMES[14] = {"EQ",
+                                "NEQ",
+                                "TRUE",
+                                "FALSE",
+                                "NULL",
+                                "NNULL",
+                                "GT",
+                                "GTE",
+                                "LT",
+                                "LTE",
+                                "STR_EQ",
+                                "STR_NEQ",
+                                "MEM_EQ",
+                                "MEM_NEQ"};
+const char *FAIL_BASE = "%s assertion failed\n\t\ta%sb\n\t\ta=%s\n\t\tb=%s\n\t\t%s";
+const char *FAIL_STRINGS[3] = {"false", "true", "NULL"};
+const char *ASSERT_COMPSTR[6] = {"==", "!=", ">", ">=", "<", "<="};
+
+TestResult __result(char failed,
+                    char type,
+                    char comparison,
+                    const char *a,
+                    const char *b,
+                    size_t line,
+                    const char *file,
+                    const char *extra) {
+  if (extra == NULL) {
+    extra = "";
+  }
+
+  // Find how much space we need for the formatted string
+  // FAIL_BASE contains 3 `%s` meaning we would have 6 extra bytes
+  // We need to add 1 to account for null terminating byte
+  size_t needed = strlen(FAIL_BASE) + strlen(a) + strlen(b) + strlen(ASSERT_NAMES[type]) +
+                  strlen(extra) + strlen(ASSERT_COMPSTR[comparison]) - 5;
+  char *message = (char *)__salloc(needed);
+
+  sprintf(message, FAIL_BASE, ASSERT_NAMES[type], ASSERT_COMPSTR[comparison], a, b, extra);
+  TestResult result = {failed, message, __LINE__, __FILE__, 1};
+
+  return result;
+};
 
 Unit *createUnit(const char *name) {
   /* We need to add these together */
@@ -358,6 +428,9 @@ int runTests(Unit *unit) {
       printf("\t\x1b[32m[+] %s\x1b[0m\n", t.name);
     }
 #endif
+    if (result.amessage) {
+      free((char *)result.message);
+    }
   }
 
   /* Move here to avoid UAF */
