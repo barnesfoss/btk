@@ -346,10 +346,10 @@ TestResult __result(char failed,
   }
 
   // Find how much space we need for the formatted string
-  // FAIL_BASE contains 3 `%s` meaning we would have 6 extra bytes
+  // FAIL_BASE contains 4 `%s` meaning we would have 8 extra bytes
   // We need to add 1 to account for null terminating byte
   size_t needed = strlen(FAIL_BASE) + strlen(a) + strlen(b) + strlen(ASSERT_NAMES[type]) +
-                  strlen(extra) + strlen(ASSERT_COMPSTR[comparison]) - 5;
+                  strlen(extra) + strlen(ASSERT_COMPSTR[comparison]) - 7;
   char *message = (char *)__salloc(needed);
 
   sprintf(message, FAIL_BASE, ASSERT_NAMES[type], ASSERT_COMPSTR[comparison], a, b, extra);
