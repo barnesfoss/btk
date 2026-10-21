@@ -36,6 +36,13 @@ public:
     progress = prog;
   }
 
+  /// Gets the \c Bar's current set progress
+  ///
+  /// /returns The \c Bars progress value
+  float getProgress() {
+    return progress;
+  }
+
   /// Sets the progress bar characters.
   ///
   /// Sets the character progression for the progress bar from least filled to
