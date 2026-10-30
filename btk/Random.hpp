@@ -38,6 +38,28 @@ public:
     return dis(twister);
   }
 
+  // Changes the minimum generated value
+  //
+  // \param min New minimum
+  void setMin(int min) {
+    setLimits(min, dis.max());
+  };
+
+  // Changes the maximum generated value
+  //
+  // \param max New maximum
+  void setMax(int max) {
+    setLimits(dis.min(), max);
+  };
+
+  // Changes the limits of the generator
+  //
+  // \param min New minimum
+  // \param max New maximum
+  void setLimits(int min, int max) {
+    dis = std::uniform_int_distribution<int>(min, max);
+  }
+
 private:
   /// Makes a randomly initialized Mersenne Twister.
   ///
