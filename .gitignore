@@ -8,3 +8,4 @@
 !btk
 !.clang-format
 !.editorconfig
+!meson.build
