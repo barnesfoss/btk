@@ -51,7 +51,8 @@ typedef _W64 unsigned int ssize_t;
 #define BTK_NETWORK_HPP
 
 namespace btk {
-// Define varying structures & functions on Windows & *nix into "common" representation
+// Define varying structures & functions on Windows & *nix into "common"
+// representation
 #ifdef _WIN32
 typedef SOCKET socket_t;
 #else
@@ -106,9 +107,15 @@ public:
     close();
   }
 
-  void setOption(int option_name, const void *option_value, socklen_t value_size) {
+  void setOption(int option_name,
+                 const void *option_value,
+                 socklen_t value_size) {
 #ifdef _WIN32
-    setsockopt(sock, SOL_SOCKET, option_name, static_cast<const char *>(option_value), value_size);
+    setsockopt(sock,
+               SOL_SOCKET,
+               option_name,
+               static_cast<const char *>(option_value),
+               value_size);
 #else
     setsockopt(sock, SOL_SOCKET, option_name, option_value, value_size);
 #endif
@@ -207,7 +214,8 @@ public:
     hints.ai_flags = 0;
 
     // Name resolution
-    int err = getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res);
+    int err =
+        getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res);
     if (err != 0) {
       std::cerr << "getaddrinfo failed: " << gai_strerror(err) << '\n';
       return -1;
@@ -251,7 +259,8 @@ private:
 
 class Port : public Socket {
 public:
-  Port(uint16_t out, SocketFamily IPType = IPv4, int inAddr = INADDR_ANY) : Socket() {
+  Port(uint16_t out, SocketFamily IPType = IPv4, int inAddr = INADDR_ANY)
+      : Socket() {
     struct sockaddr_in addr;
     addr.sin_family = IPType;
     addr.sin_addr.s_addr = htonl(inAddr);

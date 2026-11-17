@@ -19,8 +19,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define SAFEFREE(x)                                                                                \
-  if (x != NULL)                                                                                   \
+#define SAFEFREE(x)                                                            \
+  if (x != NULL)                                                               \
   free(x)
 
 struct flagstack {
@@ -91,7 +91,8 @@ void normalArgPush(args_t *stack, char *c) {
 }
 
 // NOTE.kb This is a really bad way of making a map but realistically we aren't
-// going to get to a point where the time complexity matters with command line args I'd hope
+// going to get to a point where the time complexity matters with command line
+// args I'd hope
 void argOptPush(struct optstack *stack, char *key, char *value) {
   if (stack->top >= stack->size) {
     size_t new_size = stack->size ? stack->size * 2 : 2;
