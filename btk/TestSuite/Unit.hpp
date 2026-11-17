@@ -22,30 +22,31 @@
 /// Creates a test and automatically adds it to a unit's registry
 /// MUST be used inside a \c UnitTest
 /// \param name The name of the test
-#define TEST(name)                                                                                 \
-  static void register_##name(Derived &self) {                                                     \
-    Test t = {name, #name};                                                                        \
-    self.addTest(t);                                                                               \
-  }                                                                                                \
-  inline static const bool name##_registered =                                                     \
-      btk::UnitTest<Derived>::registerTest(Derived::register_##name);                              \
+#define TEST(name)                                                             \
+  static void register_##name(Derived &self) {                                 \
+    Test t = {name, #name};                                                    \
+    self.addTest(t);                                                           \
+  }                                                                            \
+  inline static const bool name##_registered =                                 \
+      btk::UnitTest<Derived>::registerTest(Derived::register_##name);          \
   static TestResult name()
 
 /// \brief Creates a UnitTest
 /// Shorthand for \c UnitTest with the parts needed for operation
 /// \param name The name of the Unit
-#define UNIT(name)                                                                                 \
-  class name : public btk::UnitTest<name> {                                                        \
-    using Derived = name;                                                                          \
-                                                                                                   \
-  public:                                                                                          \
-    name() : UnitTest(#name) {};                                                                   \
-                                                                                                   \
+#define UNIT(name)                                                             \
+  class name : public btk::UnitTest<name> {                                    \
+    using Derived = name;                                                      \
+                                                                               \
+  public:                                                                      \
+    name() : UnitTest(#name) {};                                               \
+                                                                               \
   private:
 
-/// \brief Shorthand for `};` this is for consistency as TEST() has an open bracket
-#define UNITEND                                                                                    \
-  }                                                                                                \
+/// \brief Shorthand for `};` this is for consistency as TEST() has an open
+/// bracket
+#define UNITEND                                                                \
+  }                                                                            \
   ;
 
 /// \brief Shorthand to run a unit
@@ -84,8 +85,8 @@ public:
 
   /// \brief Runs all tests
   ///
-  /// This also registers all of the tests but this is irrelevant to the end user
-  /// The unit cannot be ran after it's already been run.
+  /// This also registers all of the tests but this is irrelevant to the end
+  /// user The unit cannot be ran after it's already been run.
   ///
   int run() {
     if (ran)

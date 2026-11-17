@@ -7,3 +7,4 @@
 !btk/**
 !btk
 !.clang-format
+!.editorconfig

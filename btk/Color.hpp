@@ -41,13 +41,14 @@ struct Color3 {
   ///
   /// \param hex A hexadecimal representation of a color
   Color3(uint32_t hex)
-      : r(static_cast<uint8_t>((hex >> 16) & 0xff)), g(static_cast<uint8_t>((hex >> 8) & 0xff)),
+      : r(static_cast<uint8_t>((hex >> 16) & 0xff)),
+        g(static_cast<uint8_t>((hex >> 8) & 0xff)),
         b(static_cast<uint8_t>(hex & 0xff)) {}
 
   /// Performs linear interpolation between two colors.
   ///
-  /// Takes this color, a provided target color, and an alpha value and creates a new Color using.
-  /// the interpolated values.
+  /// Takes this color, a provided target color, and an alpha value and creates
+  /// a new Color using. the interpolated values.
   ///
   /// \param target The target color.
   /// \param alpha The progress towards the target.
@@ -62,17 +63,19 @@ struct Color3 {
   /// \param out The output stream.
   /// \param color The color to format.
   friend std::ostream &operator<<(std::ostream &out, const Color3 &color) {
-    out << "Color3(" << static_cast<int>(color.r) << "," << static_cast<int>(color.g) << ","
-        << static_cast<int>(color.b) << ")";
+    out << "Color3(" << static_cast<int>(color.r) << ","
+        << static_cast<int>(color.g) << "," << static_cast<int>(color.b) << ")";
     return out;
   };
 
   friend bool operator==(const Color3 &color, const Color3 &color2) {
-    return (color.r == color2.r) & (color.g == color2.g) & (color.b == color2.b);
+    return (color.r == color2.r) & (color.g == color2.g) &
+           (color.b == color2.b);
   };
 
   friend bool operator!=(const Color3 &color, const Color3 &color2) {
-    return (color.r != color2.r) || (color.g != color2.g) || (color.b != color2.b);
+    return (color.r != color2.r) || (color.g != color2.g) ||
+           (color.b != color2.b);
   };
 
   friend Color3 operator+(const Color3 &color, const Color3 &color2) {
@@ -264,8 +267,9 @@ struct Color4 : Color3 {
   /// \param out The output stream.
   /// \param color The color to format.
   friend std::ostream &operator<<(std::ostream &out, const Color4 &color) {
-    out << "Color4(" << static_cast<int>(color.r) << "," << static_cast<int>(color.g) << ","
-        << static_cast<int>(color.b) << "," << static_cast<int>(color.a) << ")";
+    out << "Color4(" << static_cast<int>(color.r) << ","
+        << static_cast<int>(color.g) << "," << static_cast<int>(color.b) << ","
+        << static_cast<int>(color.a) << ")";
     return out;
   };
 

@@ -29,7 +29,8 @@ public:
   /// \param seed The inital entropy used by the generator.
   /// \param min The minimum number that can be genrated.
   /// \param max The maximum number that can be generated.
-  Random(uint32_t seed, int min = 0, int max = 1) : twister(seed), dis(min, max) {};
+  Random(uint32_t seed, int min = 0, int max = 1)
+      : twister(seed), dis(min, max) {};
 
   /// Generates the next number in the sequence.
   ///

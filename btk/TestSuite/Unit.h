@@ -25,8 +25,9 @@ typedef struct {
   int line;
   const char *file;
   char amessage; // Whether the message was dynamically allocated
-                 // We need to check this to be sure we are freeing something that can actually be
-                 // freed since the new optimizations allocate memory for these
+                 // We need to check this to be sure we are freeing something
+                 // that can actually be freed since the new optimizations
+                 // allocate memory for these
 } TestResult;
 
 /* A Test object containing the name and the function. */
@@ -47,14 +48,15 @@ typedef struct {
 /*******************************************************************/
 /* Function Definitions*/
 /*******************************************************************/
-/* This is written in C, so C++ will need to define it as an extern to make the compiler not
- * complain */
+/* This is written in C, so C++ will need to define it as an extern to make the
+ * compiler not complain */
 #ifdef __cplusplus
 extern "C" {
 #endif
 /* \brief Internal helper function for allocation error checks.
  *
- * Calls malloc and checks success, if not successful abort and throw an error message.
+ * Calls malloc and checks success, if not successful abort and throw an error
+ * message.
  *
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
@@ -63,7 +65,8 @@ extern "C" {
 
 /* \brief Internal helper function for allocation error checks.
  *
- * Calls realloc and checks success, if not successful abort and throw an error message.
+ * Calls realloc and checks success, if not successful abort and throw an error
+ * message.
  *
  * \param n The size to allocate.
  * \returns A pointer to the allocated memory.
@@ -90,7 +93,8 @@ void __addTest(Unit *unit, Test test);
 
 /* \brief Runs all the tests within the \c Unit.
  *
- * All tests will be run in sequence and output to the terminal, this also destructs the Unit.
+ * All tests will be run in sequence and output to the terminal, this also
+ * destructs the Unit.
  *
  * \param unit The unit to run.
  */
@@ -119,31 +123,31 @@ TestResult __result(char failed,
  * \param unit The unit object we are adding the test to.
  * \param func The function version of a test.
  */
-#define ADDTEST(unit, func)                                                                        \
-  do {                                                                                             \
-    Test t = {func, #func};                                                                        \
-    __addTest(unit, t);                                                                            \
+#define ADDTEST(unit, func)                                                    \
+  do {                                                                         \
+    Test t = {func, #func};                                                    \
+    __addTest(unit, t);                                                        \
   } while (0)
 
 /* \brief Abstraction for a \c TestResult.
  *
- * Makes returning a \c TestResult simple by making it function-like call, and automatically inserts
- * extra data that the user shouldn't have to enter.
+ * Makes returning a \c TestResult simple by making it function-like call, and
+ * automatically inserts extra data that the user shouldn't have to enter.
  *
  * \param failed Whether the test fails or not (True or False).
  * \param message Associated error message.
  */
-#define RESULT(failed, message)                                                                    \
-  do {                                                                                             \
-    TestResult result = {failed, message, __LINE__, __FILE__, 0};                                  \
-    return result;                                                                                 \
+#define RESULT(failed, message)                                                \
+  do {                                                                         \
+    TestResult result = {failed, message, __LINE__, __FILE__, 0};              \
+    return result;                                                             \
   } while (0)
 
 /* Returns a successful \c TestResult */
-#define TESTEND                                                                                    \
-  do {                                                                                             \
-    TestResult result = {0};                                                                       \
-    return result;                                                                                 \
+#define TESTEND                                                                \
+  do {                                                                         \
+    TestResult result = {0};                                                   \
+    return result;                                                             \
   } while (0)
 
 /* \brief Abstraction for a test function definition.
@@ -153,131 +157,143 @@ TestResult __result(char failed,
  */
 #define TEST(name) TestResult name()
 
-/* Asserts whether two values are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_EQ_MSG(a, b, extra)                                                                 \
-  do {                                                                                             \
-    if (!((a) == (b))) {                                                                           \
-      return __result(1, 0, 0, #a, #b, __LINE__, __FILE__, extra);                                 \
-    }                                                                                              \
+/* Asserts whether two values are equivalent, returns a failed TestResult if
+ * not.*/
+#define ASSERT_EQ_MSG(a, b, extra)                                             \
+  do {                                                                         \
+    if (!((a) == (b))) {                                                       \
+      return __result(1, 0, 0, #a, #b, __LINE__, __FILE__, extra);             \
+    }                                                                          \
   } while (0)
 #define ASSERT_EQ(a, b) ASSERT_EQ_MSG(a, b, NULL)
 
-/* Asserts whether two values are not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_NEQ_MSG(a, b, extra)                                                                \
-  do {                                                                                             \
-    if (!((a) != (b))) {                                                                           \
-      return __result(1, 1, 1, #a, #b, __LINE__, __FILE__, extra);                                 \
-    }                                                                                              \
+/* Asserts whether two values are not equivalent, returns a failed TestResult if
+ * not.*/
+#define ASSERT_NEQ_MSG(a, b, extra)                                            \
+  do {                                                                         \
+    if (!((a) != (b))) {                                                       \
+      return __result(1, 1, 1, #a, #b, __LINE__, __FILE__, extra);             \
+    }                                                                          \
   } while (0)
 #define ASSERT_NEQ(a, b) ASSERT_NEQ_MSG(a, b, NULL)
 
 /* Asserts whether a value is true, returns a failed TestResult if not.*/
-#define ASSERT_TRUE_MSG(a, extra)                                                                  \
-  do {                                                                                             \
-    if (!(a)) {                                                                                    \
-      return __result(1, 2, 0, #a, FAIL_STRINGS[1], __LINE__, __FILE__, extra);                    \
-    }                                                                                              \
+#define ASSERT_TRUE_MSG(a, extra)                                              \
+  do {                                                                         \
+    if (!(a)) {                                                                \
+      return __result(                                                         \
+          1, 2, 0, #a, FAIL_STRINGS[1], __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_TRUE(a) ASSERT_TRUE_MSG(a, NULL)
 
 /* Asserts whether a value is false, returns a failed TestResult if not.*/
-#define ASSERT_FALSE_MSG(a, extra)                                                                 \
-  do {                                                                                             \
-    if (a) {                                                                                       \
-      return __result(1, 3, 0, #a, FAIL_STRINGS[0], __LINE__, __FILE__, extra);                    \
-    }                                                                                              \
+#define ASSERT_FALSE_MSG(a, extra)                                             \
+  do {                                                                         \
+    if (a) {                                                                   \
+      return __result(                                                         \
+          1, 3, 0, #a, FAIL_STRINGS[0], __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_FALSE(a) ASSERT_FALSE_MSG(a, NULL)
 
 /* Asserts whether a value is NULL, returns a failed TestResult if not.*/
-#define ASSERT_NULL_MSG(a, extra)                                                                  \
-  do {                                                                                             \
-    if ((a) != NULL) {                                                                             \
-      return __result(1, 4, 0, #a, FAIL_STRINGS[2], __LINE__, __FILE__, extra);                    \
-    }                                                                                              \
+#define ASSERT_NULL_MSG(a, extra)                                              \
+  do {                                                                         \
+    if ((a) != NULL) {                                                         \
+      return __result(                                                         \
+          1, 4, 0, #a, FAIL_STRINGS[2], __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_NULL(a) ASSERT_NULL_MSG(a, NULL)
 
 /* Asserts whether a value is not NULL, returns a failed TestResult if not.*/
-#define ASSERT_NNULL_MSG(a, extra)                                                                 \
-  do {                                                                                             \
-    if ((a) == NULL) {                                                                             \
-      return __result(1, 5, 1, #a, FAIL_STRINGS[2], __LINE__, __FILE__, extra);                    \
-    }                                                                                              \
+#define ASSERT_NNULL_MSG(a, extra)                                             \
+  do {                                                                         \
+    if ((a) == NULL) {                                                         \
+      return __result(                                                         \
+          1, 5, 1, #a, FAIL_STRINGS[2], __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_NNULL(a) ASSERT_NNULL_MSG(a, NULL)
 
-/* Asserts whether a value is greater than the other, returns a failed TestResult if not.*/
-#define ASSERT_GT_MSG(a, b, extra)                                                                 \
-  do {                                                                                             \
-    if (!((a) > (b))) {                                                                            \
-      return __result(1, 6, 4, #a, #b, __LINE__, __FILE__, extra);                                 \
-    }                                                                                              \
+/* Asserts whether a value is greater than the other, returns a failed
+ * TestResult if not.*/
+#define ASSERT_GT_MSG(a, b, extra)                                             \
+  do {                                                                         \
+    if (!((a) > (b))) {                                                        \
+      return __result(1, 6, 4, #a, #b, __LINE__, __FILE__, extra);             \
+    }                                                                          \
   } while (0)
 #define ASSERT_GT(a, b) ASSERT_GT_MSG(a, b, NULL)
 
-/* Asserts whether a value is greater than or equal to the other, returns a failed TestResult if
- * not.*/
-#define ASSERT_GTE_MSG(a, b, extra)                                                                \
-  do {                                                                                             \
-    if (!((a) >= (b))) {                                                                           \
-      return __result(1, 7, 5, #a, #b, __LINE__, __FILE__, extra);                                 \
-    }                                                                                              \
+/* Asserts whether a value is greater than or equal to the other, returns a
+ * failed TestResult if not.*/
+#define ASSERT_GTE_MSG(a, b, extra)                                            \
+  do {                                                                         \
+    if (!((a) >= (b))) {                                                       \
+      return __result(1, 7, 5, #a, #b, __LINE__, __FILE__, extra);             \
+    }                                                                          \
   } while (0)
 #define ASSERT_GTE(a, b) ASSERT_GTE_MSG(a, b, NULL)
 
-/* Asserts whether a value is less than than the other, returns a failed TestResult if not.*/
-#define ASSERT_LT_MSG(a, b, extra)                                                                 \
-  do {                                                                                             \
-    if (!((a) < (b))) {                                                                            \
-      return __result(1, 8, 6, #a, #b, __LINE__, __FILE__, extra);                                 \
-    }                                                                                              \
+/* Asserts whether a value is less than than the other, returns a failed
+ * TestResult if not.*/
+#define ASSERT_LT_MSG(a, b, extra)                                             \
+  do {                                                                         \
+    if (!((a) < (b))) {                                                        \
+      return __result(1, 8, 6, #a, #b, __LINE__, __FILE__, extra);             \
+    }                                                                          \
   } while (0)
 #define ASSERT_LT(a, b) ASSERT_LT_MSG(a, b, NULL)
 
-/* Asserts whether a value is less than than or equal to the other, returns a failed TestResult if
- * not.*/
-#define ASSERT_LTE_MSG(a, b, extra)                                                                \
-  do {                                                                                             \
-    if (!((a) <= (b))) {                                                                           \
-      return __result(1, 9, 7, #a, #b, __LINE__, __FILE__, extra);                                 \
-    }                                                                                              \
+/* Asserts whether a value is less than than or equal to the other, returns a
+ * failed TestResult if not.*/
+#define ASSERT_LTE_MSG(a, b, extra)                                            \
+  do {                                                                         \
+    if (!((a) <= (b))) {                                                       \
+      return __result(1, 9, 7, #a, #b, __LINE__, __FILE__, extra);             \
+    }                                                                          \
   } while (0)
 #define ASSERT_LTE(a, b) ASSERT_LTE_MSG(a, b, NULL)
 
-/* Asserts whether two strings are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_STR_EQ_MSG(a, b, extra)                                                             \
-  do {                                                                                             \
-    if (strcmp((a), (b))) {                                                                        \
-      return __result(1, 10, 0, #a, #b, __LINE__, __FILE__, extra);                                \
-    }                                                                                              \
+/* Asserts whether two strings are equivalent, returns a failed TestResult if
+ * not.*/
+#define ASSERT_STR_EQ_MSG(a, b, extra)                                         \
+  do {                                                                         \
+    if (strcmp((a), (b))) {                                                    \
+      return __result(1, 10, 0, #a, #b, __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_STR_EQ(a, b) ASSERT_STR_EQ_MSG(a, b, NULL)
 
-/* Asserts whether two strings are not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_STR_NEQ_MSG(a, b, extra)                                                            \
-  do {                                                                                             \
-    if (!strcmp((a), (b))) {                                                                       \
-      return __result(1, 11, 1, #a, #b, __LINE__, __FILE__, extra);                                \
-    }                                                                                              \
+/* Asserts whether two strings are not equivalent, returns a failed TestResult
+ * if not.*/
+#define ASSERT_STR_NEQ_MSG(a, b, extra)                                        \
+  do {                                                                         \
+    if (!strcmp((a), (b))) {                                                   \
+      return __result(1, 11, 1, #a, #b, __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_STR_NEQ(a, b) ASSERT_STR_NEQ_MSG(a, b, NULL)
 
-/* Asserts whether two memory objects are equivalent, returns a failed TestResult if not.*/
-#define ASSERT_MEM_EQ_MSG(a, b, size, extra)                                                       \
-  do {                                                                                             \
-    if (memcmp(a, b, size)) {                                                                      \
-      return __result(1, 12, 0, #a, #b, __LINE__, __FILE__, extra);                                \
-    }                                                                                              \
+/* Asserts whether two memory objects are equivalent, returns a failed
+ * TestResult if not.*/
+#define ASSERT_MEM_EQ_MSG(a, b, size, extra)                                   \
+  do {                                                                         \
+    if (memcmp(a, b, size)) {                                                  \
+      return __result(1, 12, 0, #a, #b, __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_MEM_EQ(a, b, size) ASSERT_MEM_EQ_MSG(a, b, size, NULL)
 
-/* Asserts whether two memory objects not equivalent, returns a failed TestResult if not.*/
-#define ASSERT_MEM_NEQ_MSG(a, b, size, extra)                                                      \
-  do {                                                                                             \
-    if (!memcmp(a, b, (size))) {                                                                   \
-      return __result(1, 13, 1, #a, #b, __LINE__, __FILE__, extra);                                \
-    }                                                                                              \
+/* Asserts whether two memory objects not equivalent, returns a failed
+ * TestResult if not.*/
+#define ASSERT_MEM_NEQ_MSG(a, b, size, extra)                                  \
+  do {                                                                         \
+    if (!memcmp(a, b, (size))) {                                               \
+      return __result(1, 13, 1, #a, #b, __LINE__, __FILE__, extra);            \
+    }                                                                          \
   } while (0)
 #define ASSERT_MEM_NEQ(a, b, size) ASSERT_MEM_NEQ_MSG(a, b, size, NULL)
 
@@ -288,8 +304,8 @@ TestResult __result(char failed,
 // #define BTK_UNIT_IMPL
 #ifdef BTK_UNIT_IMPL
 #undef BTK_UNIT_IMPL
-/* This is written in C, so C++ will need to define it as an extern to make the compiler not
- * complain */
+/* This is written in C, so C++ will need to define it as an extern to make the
+ * compiler not complain */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -329,7 +345,8 @@ const char *ASSERT_NAMES[14] = {"EQ",
                                 "STR_NEQ",
                                 "MEM_EQ",
                                 "MEM_NEQ"};
-const char *FAIL_BASE = "%s assertion failed\n\t\ta%sb\n\t\ta=%s\n\t\tb=%s\n\t\t%s";
+const char *FAIL_BASE =
+    "%s assertion failed\n\t\ta%sb\n\t\ta=%s\n\t\tb=%s\n\t\t%s";
 const char *FAIL_STRINGS[3] = {"false", "true", "NULL"};
 const char *ASSERT_COMPSTR[6] = {"==", "!=", ">", ">=", "<", "<="};
 
@@ -348,11 +365,18 @@ TestResult __result(char failed,
   // Find how much space we need for the formatted string
   // FAIL_BASE contains 4 `%s` meaning we would have 8 extra bytes
   // We need to add 1 to account for null terminating byte
-  size_t needed = strlen(FAIL_BASE) + strlen(a) + strlen(b) + strlen(ASSERT_NAMES[type]) +
-                  strlen(extra) + strlen(ASSERT_COMPSTR[comparison]) - 7;
+  size_t needed = strlen(FAIL_BASE) + strlen(a) + strlen(b) +
+                  strlen(ASSERT_NAMES[type]) + strlen(extra) +
+                  strlen(ASSERT_COMPSTR[comparison]) - 7;
   char *message = (char *)__salloc(needed);
 
-  sprintf(message, FAIL_BASE, ASSERT_NAMES[type], ASSERT_COMPSTR[comparison], a, b, extra);
+  sprintf(message,
+          FAIL_BASE,
+          ASSERT_NAMES[type],
+          ASSERT_COMPSTR[comparison],
+          a,
+          b,
+          extra);
   TestResult result = {failed, message, __LINE__, __FILE__, 1};
 
   return result;
@@ -386,7 +410,8 @@ int runTests(Unit *unit) {
   int result;
 
   /* Allocate space for the results */
-  TestResult *results = (TestResult *)__salloc(sizeof(TestResult) * unit->testCount);
+  TestResult *results =
+      (TestResult *)__salloc(sizeof(TestResult) * unit->testCount);
 
   /* Iterator */
   int i = unit->testCount;

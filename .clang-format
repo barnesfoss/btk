@@ -2,7 +2,7 @@
 BasedOnStyle: LLVM
 ---
 Language: Cpp
-ColumnLimit: 100
+ColumnLimit: 80
 AllowShortFunctionsOnASingleLine: Empty
 BinPackArguments: false
 BinPackParameters: false
